@@ -1,8 +1,8 @@
 CC = g++
-all: my_allocator
+all: test
 FLAGS = -std=c++17 -Wall
-my_allocator: Allocator.o  main.o
-	$(CC) $(FLAGS) -o my_allocator Allocator.o main.o
+test: Allocator.o  main.o
+	$(CC) $(FLAGS) -o test Allocator.o main.o
 main.o: main.cpp Allocator.hpp
 	$(CC) $(FLAGS) -c main.cpp
 allocator.o: Allocator.cpp Allocator.hpp
