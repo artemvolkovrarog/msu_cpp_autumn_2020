@@ -1,51 +1,70 @@
 #include <iostream>
 #include "Allocator.hpp"
-void test1(){//Тест 1: без ошибок, разными способами выделяем память, также используем reset, alloc работает корректно
-	std::cout << "Test 1\n";
+#include <cassert>
+
+
+void allcorrect(){
 	Allocator a;
-	a.makeallocator(1024);
-	a.alloc(512);
-	a.alloc(256);
-	a.alloc(256);
+	a.makeallocator(4096);
+	char* ptr_test1 = a.alloc(2048);
+	char* ptr_test2 = a.alloc(1024);
+	char* ptr_test3 = a.alloc(999);
+	char*ptr_test4 = a.alloc(25);
 	a.reset();
-	a.alloc(728);
-	a.alloc(296);
+	int offset = a.getofs();
+	assert(ptr_test4 != nullptr && ptr_test3 != nullptr && ptr_test2 != nullptr && ptr_test1 != nullptr && offset == 0);
+	std :: cout << "Test is passed\n";
 }
 
-void test2(){
-//Тест 2: два  предупреждения при вызове методов reset и  alloc неинициализированного аллокатора, ошибка при запросе выделений памяти,
-// выходящих за пределы выделенного объема памяти
-	std::cout << "Test 2\n";
+void incorrectallocsize(){
 	Allocator b;
-	b.alloc(2048);
-	b.reset();
-	b.makeallocator(4096);
-	for (int i = 0; i < 4; i++){
-		b.alloc(1024);
-	}
-	b.alloc(1);
+	b.makeallocator(2048);
+	char* ptr_test1 = b.alloc(2050);
+	char* ptr_test2 = b.alloc(0);
+	char* ptr_test3 = b.alloc(-1);
+	assert(ptr_test1 == nullptr && ptr_test2 == nullptr && ptr_test3 == nullptr);
+	std :: cout << "Test is passed\n";
 }
 
-void test3(){//Тест 3: ошибка при создании аллокатора памяти по отрицательному размеру
-	std::cout << "Test3\n";
+void incorrectmakealloc(){
 	Allocator c;
-	c.makeallocator(-2048);
-}
-void test4(){// Тест 4: ошибки при запросе выделения блока памяти размера 0, а так же при запросе на выделение блока
-	//по отрицательному числу
-	std::cout << "Test4\n";
-	Allocator d;
-	d.makeallocator(8192);
-	d.alloc(0);
-	d.alloc(-12);
-	
+	int checkerr = 0;
+	try{
+		c.makeallocator(10000000000000000);
+	}
+	catch(int i){
+		checkerr = i;
+	}
+	assert(checkerr != 0 && c.gethead() == nullptr);
+	std :: cout << "Test is passed\n";
 }
 
+void doublemakealloc(){
+	Allocator d;
+	int checkerr = 0;
+	int offset1;
+	int offset2;
+	try{
+		d.makeallocator(2048);
+		d.alloc(1024);
+		offset1 = d.getofs();
+		d.makeallocator(2046);
+	}
+	catch(int i){
+		checkerr = i;
+	}
+	offset2 = d.getofs();
+	assert(checkerr != 0 && (offset2 == offset1));
+	std :: cout << "Test is passed\n"; 
+
+
+}
 
 int main(){
-	test1();
-	test2();
-	test3();
-	test4();
+	allcorrect();
+	incorrectallocsize();
+	incorrectmakealloc();
+	doublemakealloc();
+	std::cout << "All tests were passed, congratulations!\n";
 	return 0;
 }

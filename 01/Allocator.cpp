@@ -1,5 +1,6 @@
 #include "Allocator.hpp"
 #include <iostream>
+
 void Allocator::makeallocator(std::size_t max_size){
 	try{
 		if (check_alloc == false){
@@ -8,12 +9,13 @@ void Allocator::makeallocator(std::size_t max_size){
 		}
 		else{
 			std::cout << "Warning, memory has already been allocated\n";
+			throw(1);
 		}
 	}
-	catch(...){
-		std::cout<< "Error while creating allocator\n"; 
+	catch(std::bad_alloc ba){
 		head = nullptr;
-		return;
+		std::cout << "Error while allocating memory\n";
+		throw(1);
 	}
 	offset = 0;
 	block_size = max_size;
@@ -21,21 +23,17 @@ void Allocator::makeallocator(std::size_t max_size){
 }
 
 char* Allocator::alloc(std::size_t size){
-	try{
-		if (size == 0){
-			throw("Error, size equals zero\n");
-		}
-		else if(check_alloc == false){
-			throw("Warning, memory hasn't been allocated yet\n");
-		}
-		else if (size * sizeof(char)  > block_size - offset) {
-			throw ("Error while allocating memory, size exceeds limits\n");
-		}
-	}
-	catch(const char* s){
-		std::cout << s;
+	if (size == 0){
+		std::cout << "Error, size equals zero\n";
 		return nullptr;
-
+	}
+	else if(check_alloc == false){
+		std::cout << "Error, memory hasn't been allocated yet\n";
+		return nullptr;
+	}
+	else if (size * sizeof(char)  > block_size - offset) {
+		std::cout << "Error while allocating memory, size exceeds limits\n";
+		return nullptr;
 	}
 	char* ret_offset = head + offset * sizeof(char);
 	offset = offset + sizeof(char) * size;
@@ -43,8 +41,5 @@ char* Allocator::alloc(std::size_t size){
 }
 
 void Allocator:: reset(){
-	if (check_alloc == false){
-		std::cout << "Warning, memory hasn't been allocated yet\n";
-	}
 	offset = 0;
 }

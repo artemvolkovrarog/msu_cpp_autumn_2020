@@ -1,4 +1,5 @@
 #include <iostream>
+#pragma once
 class Allocator{
 	char* head;
 	int offset;
@@ -14,6 +15,12 @@ class Allocator{
 		void makeallocator(std::size_t max_size);
 		char* alloc(std::size_t size);
 		void reset();
+		char* gethead(){
+			return head;
+		}
+		int getofs(){
+			return offset;
+		}
 		~Allocator(){
 			if (head != nullptr) delete []head;
 		}
