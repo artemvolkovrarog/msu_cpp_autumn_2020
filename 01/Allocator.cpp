@@ -12,7 +12,7 @@ void Allocator::makeallocator(std::size_t max_size){
 			throw(1);
 		}
 	}
-	catch(std::bad_alloc ba){
+	catch(const std::bad_alloc& ba){
 		head = nullptr;
 		std::cout << "Error while allocating memory\n";
 		throw(1);

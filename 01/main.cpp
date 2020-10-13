@@ -26,18 +26,6 @@ void incorrectallocsize(){
 	std :: cout << "Test is passed\n";
 }
 
-void incorrectmakealloc(){
-	Allocator c;
-	int checkerr = 0;
-	try{
-		c.makeallocator(10000000000000000);
-	}
-	catch(int i){
-		checkerr = i;
-	}
-	assert(checkerr != 0 && c.gethead() == nullptr);
-	std :: cout << "Test is passed\n";
-}
 
 void doublemakealloc(){
 	Allocator d;
@@ -50,20 +38,17 @@ void doublemakealloc(){
 		offset1 = d.getofs();
 		d.makeallocator(2046);
 	}
-	catch(int i){
+	catch(const int& i){
 		checkerr = i;
 	}
 	offset2 = d.getofs();
 	assert(checkerr != 0 && (offset2 == offset1));
 	std :: cout << "Test is passed\n"; 
-
-
 }
 
 int main(){
 	allcorrect();
 	incorrectallocsize();
-	incorrectmakealloc();
 	doublemakealloc();
 	std::cout << "All tests were passed, congratulations!\n";
 	return 0;
