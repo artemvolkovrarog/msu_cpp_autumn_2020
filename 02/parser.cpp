@@ -18,23 +18,25 @@ void finish(){
 	std::cout << "Parsing is finished" << std::endl << std::endl;
 }
 
-void find(const std::string& s){
+void find(const std::string & s){
 	std :: cout << "New token was found !" << std::endl << "The type if token - " << s << std::endl;
 }
 
-void stringhandler(std::string s){
+void stringhandler(const std::string & s, std :: stack<std::string> & check_callbacks){
 	std :: cout << "String - token: " << s << std::endl;
+	check_callbacks.push("str");
 }
 
-void digithandler(std::string s){
+void digithandler(const std::string & s,std :: stack<std::string> & check_callbacks){
 	std :: cout << "Int - token: "<< stoi(s) << std::endl;
+	check_callbacks.push("dig");
 }
 
 std::string start_alternative(const std::string& st){
 	return("NOFILE");
 }
 
-void TokenParser::SetDigitCallback(DigitMaintan  dig){
+void TokenParser::SetDigitCallback(DigitMaintain  dig){
 	digprs = dig;
 }
 
@@ -52,81 +54,55 @@ void TokenParser::SetFinishCallback(FinishCallback fscb){
 	finish = fscb;
 }
 
+bool check_dig(const std::string & s){
+	bool dig = true;
+	for (int i = 0; i < s.length(); i++){
+		if (!isdigit(s[i])){
+			dig = false;
+			break;
+		}
+	}
+	return dig;
+}
+
 
 void TokenParser::Parser(const std::string & s) {
-	bool inp_digit = false;
-	bool token_inp = false;
-	bool inp_str = false;
 	if ((strprs == nullptr) || (start == nullptr) || (digprs == nullptr) || (find == nullptr) || (finish == nullptr)){
 		throw "Error, one or several funcion(-s) was(-were)n't set";
 	}
-	std :: string fnm;
-	fnm = start(s);
-	char* fnmc = new char[fnm.length()+1];
-
-	for (int i = 0; i< fnm.length(); i++){
-		fnmc[i] = fnm[i];
-	}
-	fnmc[fnm.length()] = '\0';
-
-	file.open(fnmc);
+	std :: string filename;
+	filename = start(s);
+	file.open(filename);
 
 	if (!file.is_open()){
 		throw ("Error while opening the file");
 	}
-
-	char c;
 	while(1){
-		c = file.get();
+		file >> token;
 		if (file.eof()){
-			if (token_inp){
-				check_parse.push(token);
-				if (inp_str){
-					find("string");
-					strprs(token);
+			if (!token.empty()){
+				if (check_dig(token)){
+					find("digit");
+					digprs(token, check_callbacks);
 					token.clear();
 				}
-				else if (inp_digit){
-					find("digit");
-					digprs(token);
+				else{
+					find("string");
+					strprs(token, check_callbacks);
 					token.clear();
 				}
 			}
 			break;
-		}
-		else if ((c >= '0') && (c <= '9')){
-			if (!token_inp) token_inp = true;
-			if (!inp_digit) inp_digit = true;
-			token.push_back(c);
-
-		}
-		else if (isspace(c)){
-			if(token_inp){
-				check_parse.push(token);
-				token_inp = false;
-			}
-			if (inp_str){
-				find("string");
-				strprs(token);
-				token.clear();
-				inp_str = false;
-				inp_digit = false;
-				token_inp = false;
-			}
-			else if (inp_digit){
-				find("digit");
-				digprs(token);
-				token.clear();
-				inp_str = false;
-				inp_digit = false;
-				token_inp = false;
-
-			}
-		}
+		} 
+		else if (check_dig(token)){
+			find("digit");
+			digprs(token, check_callbacks);
+			token.clear();
+		} 
 		else{
-			if (!token_inp) token_inp = true;
-			if (!inp_str) inp_str = true;
-			token.push_back(c);
+			find("string");
+			strprs(token, check_callbacks);
+			token.clear();
 		}
 	}
 	finish();
