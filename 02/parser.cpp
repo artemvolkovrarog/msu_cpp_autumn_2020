@@ -4,11 +4,11 @@
 #include<fstream>
 
 std::string start(const std::string& st){
-	std :: cout << "Hello, let's parse!" << std::endl;
+	std::cout << "Hello, let's parse!" << std::endl;
 	if (st == "INPFILE"){
-		std :: cout << "Please, enter the name of input - file" << std :: endl;
+		std::cout << "Please, enter the name of input - file" << std::endl;
 		std::string s;
-		std :: cin >> s;
+		std::cin >> s;
 		return s;
 	}
 	else return st;
@@ -23,12 +23,12 @@ void find(const std::string & s){
 }
 
 void stringhandler(const std::string & s, std :: stack<std::string> & check_callbacks){
-	std :: cout << "String - token: " << s << std::endl;
+	std::cout << "String - token: " << s << std::endl;
 	check_callbacks.push("str");
 }
 
-void digithandler(const std::string & s,std :: stack<std::string> & check_callbacks){
-	std :: cout << "Int - token: "<< stoi(s) << std::endl;
+void digithandler(const std::string & s,std::stack<std::string> & check_callbacks){
+	std::cout << "Int - token: " << stoi(s) << std::endl;
 	check_callbacks.push("dig");
 }
 
@@ -77,24 +77,8 @@ void TokenParser::Parser(const std::string & s) {
 	if (!file.is_open()){
 		throw ("Error while opening the file");
 	}
-	while(1){
-		file >> token;
-		if (file.eof()){
-			if (!token.empty()){
-				if (check_dig(token)){
-					find("digit");
-					digprs(token, check_callbacks);
-					token.clear();
-				}
-				else{
-					find("string");
-					strprs(token, check_callbacks);
-					token.clear();
-				}
-			}
-			break;
-		} 
-		else if (check_dig(token)){
+	while(file >> token){
+		if (check_dig(token)){
 			find("digit");
 			digprs(token, check_callbacks);
 			token.clear();

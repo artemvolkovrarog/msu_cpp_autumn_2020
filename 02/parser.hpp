@@ -12,10 +12,10 @@ void stringhandler(const std::string&, std::stack<std::string>&);
 void digithandler(const std::string&, std::stack<std::string>&);
 
 
-using DigitMaintain = std:: function<void(const std::string &, std::stack<std::string> &)>;
-using StringMaintain = std:: function <void (const std::string &, std::stack<std::string> &)>;
-using StartCallback = std:: function <std::string(const std::string &)>;
-using FindCallback = std:: function <void(const std::string &)>;
+using DigitMaintain = std::function<void(const std::string &, std::stack<std::string> &)>;
+using StringMaintain = std::function <void (const std::string &, std::stack<std::string> &)>;
+using StartCallback = std::function <std::string(const std::string &)>;
+using FindCallback = std::function <void(const std::string &)>;
 using FinishCallback = std::function <void()>;
 
 
