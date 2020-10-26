@@ -3,16 +3,16 @@
 
 
 class row{
-	int* row_ptr;
-	int size_of_row;
-public:
-	row(){
-		row_ptr = nullptr;
-		size_of_row = 0;
-	};
-	void initialize(const int &);
-	int & operator [](const int &)const;
-	int* & get_ptr();
+		int* row_ptr;
+		int size_of_row;
+	public:
+		row(){
+			row_ptr = nullptr;
+			size_of_row = 0;
+		};
+		void initialize(const int &);
+		int & operator [](const int &)const;
+		int* & get_ptr();
 };
 
 
