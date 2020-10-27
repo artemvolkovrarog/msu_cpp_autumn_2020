@@ -9,6 +9,7 @@ void row :: initialize (int row_size){
 	if (row_ptr == nullptr){
 		throw ("Error while allocating memory");
 	}
+	for (int i = 0; i < row_size; i++) row_ptr[i] = 0;
 	size_of_row = row_size;
 }
 
@@ -46,7 +47,7 @@ row & matrix::operator [](int  pos){
 	}
 	else return sub_matrix[pos];
 }
-const row & matrix::operator [](int  pos)const{
+const row & matrix::operator [](int pos)const{
 	if (pos > rows_num){
 		throw ("Index of rows is out of range");
 	}
@@ -105,7 +106,7 @@ matrix & matrix:: operator *= (int multiplier){
 	return (*this);
 }
 
-bool matrix::operator == (const matrix & M){
+bool matrix::operator == (const matrix & M) const{
 	bool fl = true;
 	if (((*this).get_rows() != M.get_rows()) || ((*this).get_cols() != M.get_cols())){
 		throw("Error, matrices have different size");
@@ -124,7 +125,7 @@ bool matrix::operator == (const matrix & M){
 	return fl;
 }
 
-matrix matrix::operator + (const matrix & M){
+matrix matrix::operator + (const matrix & M) const{
 	if (((*this).get_rows() != M.get_rows()) || ((*this).get_cols() != M.get_cols())){
 		throw("Error, matrices have different size");
 	}
@@ -139,11 +140,16 @@ matrix matrix::operator + (const matrix & M){
 	}
 }
 
-bool matrix::operator !=(const matrix & M){
+bool matrix::operator !=(const matrix & M) const{
 	return !(*this == M);
 }
 
 matrix & matrix::operator =(const matrix & M){
+	if (((*this).get_cols() == M.get_cols()) && ((*this).get_rows() == M.get_rows())){
+		if ((*this) == M){
+			return *this;
+		}
+	}
 	if (sub_matrix != nullptr){
 		for (int i = 0; i < rows_num; i++){
 			if (sub_matrix[i].get_ptr() != nullptr) delete[]sub_matrix[i].get_ptr();

@@ -32,9 +32,9 @@ class matrix{
 		int get_rows () const;
 		int get_cols () const;
 		void init(int, int);
-		matrix operator+(const matrix &);
-		bool operator ==(const matrix &);
-		bool operator !=(const matrix &);
+		matrix operator+(const matrix &)const;
+		bool operator ==(const matrix &)const;
+		bool operator !=(const matrix &)const;
 		matrix & operator =(const matrix &);
 
 		~matrix();

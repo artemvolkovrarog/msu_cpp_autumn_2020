@@ -65,7 +65,7 @@ void check_sum(){
 
 void assignment_check(){
 	matrix M1(make_mat(20,10)), M2(make_mat(20,10,2)), M3(make_mat(20,10,3));
-	matrix M_test;
+	matrix M_test(10,10);
 	M_test = M1 + M2;
 	assert(M_test == M3);
 }
