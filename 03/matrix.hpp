@@ -36,7 +36,6 @@ class matrix{
 		bool operator ==(const matrix &)const;
 		bool operator !=(const matrix &)const;
 		matrix & operator =(const matrix &);
-
 		~matrix();
 };
 
