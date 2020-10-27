@@ -42,13 +42,13 @@ void matrix::init(int  rows_num, int  cols_num){
 }
 
 row & matrix::operator [](int  pos){
-	if (pos > rows_num){
+	if (pos >= rows_num){
 		throw ("Index of rows is out of range");
 	}
 	else return sub_matrix[pos];
 }
 const row & matrix::operator [](int pos)const{
-	if (pos > rows_num){
+	if (pos >= rows_num){
 		throw ("Index of rows is out of range");
 	}
 	else return sub_matrix[pos];
