@@ -10,8 +10,9 @@ class row{
 			row_ptr = nullptr;
 			size_of_row = 0;
 		};
-		void initialize(const int &);
-		int & operator [](const int &)const;
+		void initialize(int);
+		int & operator[](int);
+		const int & operator[](int) const;
 		int* & get_ptr();
 };
 
@@ -22,16 +23,21 @@ class matrix{
 		int rows_num, cols_num;
 		row * sub_matrix;
 	public:
-		matrix (const int & , const int &);
+		matrix();
+		matrix (int, int);
 		matrix(const matrix &);
-		row & operator [](const int &)const;
-		void operator *= (const int &);
+		row& operator[](int);
+		const row& operator[](int) const;
+		matrix & operator *= (int);
 		int get_rows () const;
 		int get_cols () const;
+		void init(int, int);
+		matrix operator+(const matrix &);
+		bool operator ==(const matrix &);
+		bool operator !=(const matrix &);
+		matrix & operator =(const matrix &);
+
 		~matrix();
 };
 
 std::ostream & operator << (std::ostream &, const matrix &);
-bool operator ==(const matrix &, const matrix &);
-matrix  operator + (const matrix &, const matrix &);
-void init(row * & , const int &, const int & );

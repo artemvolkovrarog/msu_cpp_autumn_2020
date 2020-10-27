@@ -1,7 +1,36 @@
 #include <iostream>
 #include "matrix.hpp"
 
-void init(row * & sub_matrix, const int & rows_num, const int & cols_num){
+int* & row::get_ptr(){
+	return row_ptr;
+}
+void row :: initialize (int row_size){
+	row_ptr = new int [row_size];
+	if (row_ptr == nullptr){
+		throw ("Error while allocating memory");
+	}
+	size_of_row = row_size;
+}
+
+int & row :: operator[](int pos){
+	if (pos >= size_of_row){
+		throw ("Index of columns is out of range"); 
+	} 
+	else return row_ptr[pos];
+}
+const int & row :: operator[](int pos)const{
+	if (pos >= size_of_row){
+		throw ("Index of columns is out of range"); 
+	} 
+	else return row_ptr[pos];
+}
+
+matrix::matrix(){
+	rows_num = 0;
+	cols_num = 0;
+	sub_matrix = nullptr;
+}
+void matrix::init(int  rows_num, int  cols_num){
 	sub_matrix = new row[rows_num];
 	if (sub_matrix == nullptr) {
 		throw("Error while allocating memory");
@@ -11,23 +40,19 @@ void init(row * & sub_matrix, const int & rows_num, const int & cols_num){
 	}
 }
 
-int* & row::get_ptr(){
-	return row_ptr;
-}
-void row :: initialize (const int & row_size){
-	row_ptr = new int [row_size];
-	if (row_ptr == nullptr){
-		throw ("Error while allocating memory");
+row & matrix::operator [](int  pos){
+	if (pos > rows_num){
+		throw ("Index of rows is out of range");
 	}
-	size_of_row = row_size;
+	else return sub_matrix[pos];
+}
+const row & matrix::operator [](int  pos)const{
+	if (pos > rows_num){
+		throw ("Index of rows is out of range");
+	}
+	else return sub_matrix[pos];
 }
 
-int & row :: operator [] (const int & pos)const{
-	if (pos >= size_of_row){
-		throw ("Index of columns is out of range"); 
-	} 
-	else return row_ptr[pos];
-}
 matrix::~matrix(){
 	if (sub_matrix != nullptr){
 		for (int i = 0; i < rows_num; i++){
@@ -39,7 +64,7 @@ matrix::~matrix(){
 matrix::matrix(const matrix & M){
 	rows_num = M.get_rows();
 	cols_num = M.get_cols();
-	init(sub_matrix, rows_num, cols_num);
+	(*this).init(rows_num, cols_num);
 	for (int i = 0; i < rows_num; i++){
 		for (int j = 0; j < cols_num; j++){
 			(*this)[i][j] = M[i][j];
@@ -47,18 +72,12 @@ matrix::matrix(const matrix & M){
 	}
 }
 
-matrix :: matrix (const int & rows, const int & cols){
+matrix :: matrix (int rows,int cols){
 	rows_num = rows;
 	cols_num = cols;
-	init(sub_matrix, rows_num, cols_num);
+	(*this).init(rows_num, cols_num);
 }
 
-row & matrix::operator [](const int & pos)const{
-	if (pos > rows_num){
-		throw ("Index of rows is out of range");
-	}
-	else return sub_matrix[pos];
-}
 
 int matrix::get_rows()const{
 	return rows_num;
@@ -77,23 +96,24 @@ std::ostream & operator << (std::ostream & out, const matrix & M ){
 	return out;
 }
 
-void matrix:: operator *= (const int & multiplier){
+matrix & matrix:: operator *= (int multiplier){
 	for (int i = 0; i < rows_num; i++){
 		for (int j = 0; j < cols_num; j++){
 			(*this)[i][j] *= multiplier;
 		}
 	}
+	return (*this);
 }
 
-bool operator == (const matrix & M1,const matrix & M2){
+bool matrix::operator == (const matrix & M){
 	bool fl = true;
-	if ((M1.get_rows() != M2.get_rows()) || (M1.get_cols() != M2.get_cols())){
+	if (((*this).get_rows() != M.get_rows()) || ((*this).get_cols() != M.get_cols())){
 		throw("Error, matrices have different size");
 	}
 	else{
-		for (int i = 0; i < M1.get_rows(); i++){
-			for (int j = 0; j < M1.get_cols(); j++){
-				if (M1[i][j] != M2[i][j]){
+		for (int i = 0; i < (*this).get_rows(); i++){
+			for (int j = 0; j < (*this).get_cols(); j++){
+				if ((*this)[i][j] != M[i][j]){
 					fl = false;
 					break;
 				}
@@ -104,18 +124,41 @@ bool operator == (const matrix & M1,const matrix & M2){
 	return fl;
 }
 
-matrix operator + (const matrix & M1, const matrix & M2){
-	if ((M1.get_rows() != M2.get_rows()) || (M1.get_cols() != M2.get_cols())){
+matrix matrix::operator + (const matrix & M){
+	if (((*this).get_rows() != M.get_rows()) || ((*this).get_cols() != M.get_cols())){
 		throw("Error, matrices have different size");
 	}
 	else{
-		matrix Res(M1.get_rows(), M1.get_cols());
-		for (int i = 0; i < M1.get_rows(); i++){
-			for (int j = 0; j < M1.get_cols(); j++){
-				Res[i][j] = M1[i][j] + M2[i][j];
+		matrix Res((*this).get_rows(), (*this).get_cols());
+		for (int i = 0; i < (*this).get_rows(); i++){
+			for (int j = 0; j < (*this).get_cols(); j++){
+				Res[i][j] = (*this)[i][j] + M[i][j];
 			}
 		}
 		return Res;
 	}
+}
+
+bool matrix::operator !=(const matrix & M){
+	return !(*this == M);
+}
+
+matrix & matrix::operator =(const matrix & M){
+	if (sub_matrix != nullptr){
+		for (int i = 0; i < rows_num; i++){
+			if (sub_matrix[i].get_ptr() != nullptr) delete[]sub_matrix[i].get_ptr();
+		}
+		delete[]sub_matrix;
+	}
+	rows_num = M.get_rows();
+	cols_num = M.get_cols();
+	(*this).init(rows_num, cols_num);
+	for (int i = 0; i < rows_num; i++){
+		for (int j = 0; j < cols_num; j++){
+			(*this)[i][j] = M[i][j];
+		}
+	}
+	return (*this);
+
 }
 
