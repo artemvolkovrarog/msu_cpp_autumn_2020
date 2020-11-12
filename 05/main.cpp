@@ -47,7 +47,7 @@ void test_false_or_othertype(){
 	data_correct y {0, false, false, 0};
 	Deserializer deserializer(stream);
 	const Error err = deserializer.load(y);
-	assert(err1 == Error::Other_type && err == Error::CorruptedArchive);
+	assert(err1 == Error::OtherType && err == Error::CorruptedArchive);
 
 }
 
